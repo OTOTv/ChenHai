@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>userlist</title>
+</head>
+<body>
+<div>
+    <ul>
+        <!--/*@thymesVar id="user" type="com.hrdemo.controler.Controllertest"*/-->
+        <li th:each="user:${user}">
+            <p><span th:text="${user.id}"></span></p>
+            <p><span th:text="${user.name}"></span></p>
+            <p><span th:text="${user.sex}"></span></p>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

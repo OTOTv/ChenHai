@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script th:src="@{/js/jquery-2.1.1.min.js}"></script>
+    <meta charset="UTF-8">
+    <title>上传</title>
+
+</head>
+<body>
+<form id="all">
+    <p>账号：<input id="id" name="id" type="text"></p>
+    <p>名字：<input id="name" name="name" type="text"></p>
+    <p>性别：男<input type="checkbox" value="男" name="sex">女<input type="checkbox" value="女" name="sex"></p>
+    <p><input type="button" id="send" value="上传"></p>
+</form>
+<form id="find">
+    <p><input id="f" type="button" value="查询"> </p>
+    <p id="list"></p>
+</form>
+<script>
+    $("#send").click(function () {
+        $.ajax({
+            url:"/add.do",
+            type:"get",
+            data:$("#all").serialize(),
+            dataType:"json",
+            success:function (data) {
+                alert(JSON.stringify(data))
+            }
+        })
+    })
+</script>
+<script>
+    $("#f").click(function () {
+
+        $.ajax({
+            url:"/getlist.do",
+            type:"get",
+            data:$("#find").serialize(),
+            dataType:"json",
+            success:function (data) {
+                var str="";
+                var da=data.nan
+                for( var i=0;i<da.length;i++){
+                var name=da[i].name;
+                var id=da[i].id;
+                var sex=da[i].sex;
+                str=str+"<p>"+id+name+sex+"</p>"
+                    $("#list").append(str)
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>
