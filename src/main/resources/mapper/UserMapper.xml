@@ -4,4 +4,10 @@
     <select id="login" resultType="com.hrdemo.modle.User">
         SELECT *FROM sys_user WHERE username=#{username}
     </select>
+    <insert id="insertU" parameterType="String" keyColumn="id" useGeneratedKeys="true">
+        INSERT INTO sys_user(username,password) VALUES (#{username},#{password})
+    </insert>
+    <select id="queryInfoByUsername" parameterType="String" resultType="map">
+        SELECT id,username,password FROM sys_user WHERE username=#{username}
+    </select>
 </mapper>

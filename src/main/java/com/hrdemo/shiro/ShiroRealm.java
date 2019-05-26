@@ -7,8 +7,11 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * Created by OTOT on 2019/5/22.
@@ -30,19 +33,22 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-        //log.error("");
         UsernamePasswordToken token1= (UsernamePasswordToken) token;
+        //获取传过来的用户名
         String username= token1.getUsername();
-        String password=new String((char [])token.getCredentials());
-        User user = this.service.login(username);
-        if (user == null) {
+        //通过名字寻找数据库
+        Map<String,Object> userInfo=this.service.queryInfoByUsername(username);
+        if (userInfo == null) {
+            System.out.println(1);
             throw new UnknownAccountException("用户密码错误");
         }
-            if (!password.equals(user.getPassword())) {
-                throw new IncorrectCredentialsException("aassa");
-            }
-        SimpleAuthenticationInfo info=new SimpleAuthenticationInfo(user,password,getName());
-
-        return info;
+        //获取用户名
+        Object name=userInfo.get("username");
+        //获取密码
+        Object pas=userInfo.get("password");
+        //通过ByteSource转换把用户名当盐
+        ByteSource salt=ByteSource.Util.bytes(name);
+            SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(name,pas, salt, this.getName());
+            return info;
     }
 }

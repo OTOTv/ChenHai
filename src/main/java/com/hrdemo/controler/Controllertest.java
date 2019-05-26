@@ -6,14 +6,17 @@ import com.hrdemo.service.UserService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,40 +31,53 @@ public class Controllertest {
     MongoTemplate template;
     @Autowired
     UserService userService;
-    @GetMapping("/list")
-    public String userlist(Model model) {
-        List<User> userList = new ArrayList<>();
-        model.addAttribute("user", userList);
-        return "/list";
-    }
-    @GetMapping("/ad")
-        public String ad (){
-        return "/add";
-        }
-    @PostMapping("/add")
-    @ResponseBody
-    public Msg add(Model model,User user,Msg msg){
-        System.out.println("?");
-        template.save(user);
-        if (user==null){
-            return Msg.fail(msg);
-        }
-        return Msg.success(msg);
-    }
+
+    /**
+     * @param username
+     * @param password
+     * @return
+     * 登录接口
+     */
     @PostMapping("/up")
-    public String login(String username, String password, Model model, HttpSession session,@ModelAttribute User user){
-        UsernamePasswordToken token =new UsernamePasswordToken(username,password);
+    public String login(String username, String password){
         Subject subject= SecurityUtils.getSubject();
+        UsernamePasswordToken token =new UsernamePasswordToken(username,password);
         try {
             subject.login(token);
-            user = (User) subject.getPrincipal();
-            System.out.println("!!!");
-            model.addAttribute("user", user);
-            return "/hou/index";
+            return "redirect:/index";
         }catch (Exception e){
             System.out.println("错误密码"+password);
-        return "/hou/login";
         }
+        return "redirect:/login";
     }
 
+    /**
+     * @param session
+     * @return
+     * 退出登录接口
+     */
+    @GetMapping("/logout")
+    public String logout(HttpSession session){
+        Subject subject=SecurityUtils.getSubject();
+        if (subject.isAuthenticated()){
+            subject.logout();
+        }
+        return "redirect:/login";
+    }
+
+    /**
+     * @param username
+     * @param password
+     * @param user
+     * @return
+     * 注册接口
+     */
+    @RequestMapping("/zhuc")
+    public String zhuc(String username, String password,User user){
+        boolean b=userService.insertU(username,password,user);
+        if (b){
+            return "/login";
+        }
+        return "/zhuche";
+    }
 }
