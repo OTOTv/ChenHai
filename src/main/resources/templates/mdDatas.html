@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <meta charset="UTF-8">
+    <title>上传数据</title>
+    <script src="/js/jquery.min.js"></script>
+</head>
+<body style="text-align: center">
+<form  method="post" id="alldata">
+<p>id:<input type="text" name="id"></p>
+<p>压力值：<input type="text" name="yali"></p>
+<p>电流：<input type="text" name="dianl"></p>
+<p>电压：<input type="text" name="diany"></p>
+<p>真空值<input type="text" name="zhenk"></p>
+    <input type="button" id="send">
+</form>
+</body>
+</html>
+<script>
+    $("#send").click(function () {
+        $.ajax({
+            url:"setdata.do",
+            type:"post",
+            data:$("#alldata").serialize(),
+            dataType:"json",
+            success:function (data) {
+                if (data.num==100){
+                    alert(JSON.stringify(data.msg))
+                }else {
+                    alert(JSON.stringify(data.msg))
+                }
+            }
+        })
+    })
+</script>

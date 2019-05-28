@@ -31,6 +31,7 @@ import java.util.Map;
          Map<String,String> filterChainDefinitionMap = new LinkedHashMap<String,String>();
          // 配置不会被拦截的链接
         filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/zhuche", "anon");
         filterChainDefinitionMap.put("/user/logout", "anon");
         filterChainDefinitionMap.put("/user/**", "anon");
         filterChainDefinitionMap.put("/doRegister", "anon");
@@ -59,8 +60,8 @@ import java.util.Map;
     @Bean public SecurityManager securityManager(@Qualifier("hashedCredentialsMatcher") HashedCredentialsMatcher matcher)
     {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-    securityManager.setRealm(myShiroRealm(matcher));
-    return securityManager;
+        securityManager.setRealm(myShiroRealm(matcher));
+        return securityManager;
     }
     /** * 密码匹配凭证管理器 * * @return */
     @Bean(name = "hashedCredentialsMatcher") public HashedCredentialsMatcher hashedCredentialsMatcher()

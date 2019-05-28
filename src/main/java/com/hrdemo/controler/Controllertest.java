@@ -76,8 +76,8 @@ public class Controllertest {
     public String zhuc(String username, String password,User user){
         boolean b=userService.insertU(username,password,user);
         if (b){
-            return "/login";
+            return "redirect:/login";
         }
-        return "/zhuche";
+        return "redirect:/zhuche";
     }
 }

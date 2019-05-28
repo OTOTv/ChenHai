@@ -28,7 +28,7 @@
           <ul class="nav nav-drawer">
             <li class="nav-item active"> <a th:href="@{/index}"><i class="mdi mdi-home"></i> 后台首页</a> </li>
             <li class="nav-item nav-item-has-subnav">
-              <a href="javascript:void(0)"><i class="mdi mdi-file-outline"></i> 示例页面</a>
+              <a href="javascript:void(0)"><i class="mdi mdi-file-outline"></i> 权限管理</a>
               <ul class="nav nav-subnav">
                 <li> <a href="hou/doc.html">文档列表</a> </li>
                 <li> <a href="hou/gallery.html">图库列表</a> </li>
@@ -41,7 +41,7 @@
               </ul>
             </li>
             <li class="nav-item nav-item-has-subnav">
-              <a href="javascript:void(0)"><i class="mdi mdi-language-javascript"></i> JS 插件</a>
+              <a href="javascript:void(0)"><i class="mdi mdi-language-javascript"></i> 生成sql</a>
               <ul class="nav nav-subnav">
                 <li> <a th:href="@{/datepicker}">日期选取器</a> </li>
                 <li> <a th:href="@{/chartjs}">Chart.js</a> </li>
@@ -108,7 +108,7 @@
               <div class="card-body clearfix">
                 <div class="pull-right">
                   <p class="h6 text-white m-t-0">今日收入</p>
-                  <p class="h3 text-white m-b-0">102,125.00</p>
+                  <p class="h3 text-white m-b-0">null</p>
                 </div>
                 <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-currency-cny fa-1-5x"></i></span> </div>
               </div>
@@ -120,7 +120,7 @@
               <div class="card-body clearfix">
                 <div class="pull-right">
                   <p class="h6 text-white m-t-0">用户总数</p>
-                  <p class="h3 text-white m-b-0">920,000</p>
+                  <p class="h3 text-white m-b-0">null</p>
                 </div>
                 <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-account fa-1-5x"></i></span> </div>
               </div>
@@ -132,7 +132,7 @@
               <div class="card-body clearfix">
                 <div class="pull-right">
                   <p class="h6 text-white m-t-0">下载总量</p>
-                  <p class="h3 text-white m-b-0">34,005,000</p>
+                  <p class="h3 text-white m-b-0">null</p>
                 </div>
                 <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-arrow-down-bold fa-1-5x"></i></span> </div>
               </div>
@@ -144,7 +144,7 @@
               <div class="card-body clearfix">
                 <div class="pull-right">
                   <p class="h6 text-white m-t-0">新增留言</p>
-                  <p class="h3 text-white m-b-0">153 条</p>
+                  <p class="h3 text-white m-b-0">null</p>
                 </div>
                 <div class="pull-left"> <span class="img-avatar img-avatar-48 bg-translucent"><i class="mdi mdi-comment-outline fa-1-5x"></i></span> </div>
               </div>
@@ -157,7 +157,7 @@
           <div class="col-lg-6"> 
             <div class="card">
               <div class="card-header">
-                <h4>每周用户</h4>
+                <h4>接收的数据</h4>
               </div>
               <div class="card-body">
                 <canvas class="js-chartjs-bars"></canvas>
@@ -237,21 +237,37 @@
 $(document).ready(function(e) {
     var $dashChartBarsCnt  = jQuery( '.js-chartjs-bars' )[0].getContext( '2d' ),
         $dashChartLinesCnt = jQuery( '.js-chartjs-lines' )[0].getContext( '2d' );
-    
-    var $dashChartBarsData = {
-		labels: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-		datasets: [
-			{
-				label: '注册用户',
-                borderWidth: 1,
-                borderColor: 'rgba(0,0,0,0)',
-				backgroundColor: 'rgba(51,202,185,0.5)',
-                hoverBackgroundColor: "rgba(51,202,185,0.7)",
-                hoverBorderColor: "rgba(0,0,0,0)",
-				data: [2500, 1500, 1200, 3200, 4800, 3500, 1500]
-			}
-		]
-	};
+    $.ajax({
+        cache:false,
+        async:false,
+        url:"alldata.do",
+        type:"get",
+        dataType:"json",
+        success:function (data) {
+           var num=[];
+            num.push(data.yali,data.dianl,data.diany,data.zhenk)
+            var $dashChartBarsData = {
+                labels: ['压力值', '电流', '电压', '真空值'],
+                datasets: [
+                    {
+                        label: '实时数据',
+                        borderWidth: 1,
+                        borderColor: 'rgba(0,0,0,0)',
+                        backgroundColor: 'rgba(51,202,185,0.5)',
+                        hoverBackgroundColor: "rgba(51,202,185,0.7)",
+                        hoverBorderColor: "rgba(0,0,0,0)",
+                        data: num
+                    }
+                ]
+            };
+            new Chart($dashChartBarsCnt, {
+                type: 'bar',
+                data: $dashChartBarsData
+            });
+        }
+
+    });
+
     var $dashChartLinesData = {
 		labels: ['2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014'],
 		datasets: [
@@ -267,10 +283,7 @@ $(document).ready(function(e) {
 		]
 	};
     
-    new Chart($dashChartBarsCnt, {
-        type: 'bar',
-        data: $dashChartBarsData
-    });
+
     
     var myLineChart = new Chart($dashChartLinesCnt, {
         type: 'line',

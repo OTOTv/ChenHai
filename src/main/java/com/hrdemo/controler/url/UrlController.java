@@ -19,5 +19,7 @@ public class UrlController {
     @GetMapping("/login")public String lyear_pages_login(){return"/login";}
     @GetMapping("/405")public String eer(){return "/405";}
     @GetMapping("/zhuche")public String zhuc(){return "/zhuche";}
-
+    //-------------------------------------------------------------------------------------------------
+    @GetMapping("/mdDatas")public String mdD(){return "/mdDatas";}
 }
+
